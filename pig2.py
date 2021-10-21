@@ -50,7 +50,7 @@ class Game:
     def make_players(self): #creates instances of players from PlayerFactory
         for p in range(len(self.species)):
             player = PlayerFactory()
-            self.players.append(player.get_player(self.species[p], str(p)))
+            self.players.append(player.get_player(self.species[p], f'player {str(p+1)}'))
 
 
     def is_game_over(self): # will have to eventually check for game duration as well
@@ -60,17 +60,85 @@ class Game:
             else:
                 return False
 
-    def turn(self, player):
-        pass
-
-    def message(self, player, msg):
+    def message(self, player, msg, roll=None):
         self.player = player
+        self.roll = roll
         #store messages for any occasion here:
         msg_bank = {            
-            'turn_tot_msg' : f'Current turn-total for player {player.name}: {player.turn_total}',
+            'turn_tot_msg' : f'Current turn-total for {self.player.name}: {self.player.turn_total}',
+            'roll_prompt' : 'Enter "r" to roll. Enter "h" to hold.',
+            'game_tot_msg' : f'{self.player.name} — your current game-total is: {self.player.overall_total} ',
+            'die_display' : f'You rolled a {self.roll}',
+            'winner_msg' : f'We have a winner: {self.player.name}',
+            'snake_eye' : f'Snake eye! {self.player.name} loses their turn and receives no points',
+            's_e_g_t' : f'Your game total is STILL {self.player.overall_total}. Next up!',
+            'hold_msg' : f'OK {self.player.name}, your game-total is {self.player.overall_total}',
+            'invalid_cmd' : 'Must enter an \'r\' or \'h\'. Try again'
         }
 
         return msg_bank[msg]
+
+
+    def turn(self, player):
+        self.player = player
+        player.turn_total = 0
+        turn = True # when turn is False, becomes next player's turn
+
+        if not self.is_game_over():
+            while turn:
+                print('-'*50)
+                print(f'{player.name.upper()}\'s TURN')
+                print(self.message(self.player, 'game_tot_msg')) # display basic player info at start of their turn
+                print('and', self.message(self.player, 'turn_tot_msg'))
+
+                choice = input(self.message(self.player, 'roll_prompt')) #retrieve choice
+                
+                if choice == 'r':
+                    roll = die.roll()
+                    
+                    if roll != 1:
+                        print(self.message(self.player, 'die_display', roll)) 
+                        self.player.turn_total += roll
+
+                        if not self.is_game_over():
+                            print(self.message(self.player, 'turn_tot_msg'))
+                        
+                        else:
+                            print(self.message(self.player, 'winner_msg'))
+
+                    else:
+                        print(self.message(self.player, 'snake_eye'))
+                        print(self.message(self.player, 's_e_g_t'))
+                        turn = False
+                
+                elif choice == 'h':
+                    self.player.overall_total += self.player.turn_total
+
+                    if not self.is_game_over():
+                        print(self.message(self.player, 'hold_msg') + ' . . . NEXT!')
+                        turn = False
+                    
+                    else:
+                        print(self.message(self.player, 'hold_msg') + ' That means...')
+                        print(self.message(self.player, 'winner_msg'))
+                        turn = False
+                        break
+
+                else:
+                    print(self.message(self.player, 'invalid_cmd'))                         
+                # turn = False
+
+                    
+    def play(self):
+        while not self.is_game_over():
+            for p in self.players:
+                self.turn(p)
+
+                
+        
+
+
+
 
 
 if __name__ == '__main__':
@@ -90,5 +158,6 @@ if __name__ == '__main__':
 
     #below for testing
     for p in game.players:
-        print(p.name, p.species)
-        print(game.message(p, 'turn_tot_msg'))
+        game.play()
+        # print(p.name, p.species)
+        # print(game.message(p, 'turn_tot_msg'))
