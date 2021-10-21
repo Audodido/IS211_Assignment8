@@ -1,5 +1,6 @@
 import argparse
 from random import randint
+import time
 
 
 class Die:
@@ -72,8 +73,8 @@ class Game:
         for player in self.players:
             if player.overall_total >= 100:
                 return True
-            else:
-                return False
+        else:
+            return False
 
 
     def message(self, player, msg, roll=None):
@@ -111,6 +112,7 @@ class Game:
                 if self.player.species == 'computer':
                     #print(self.player.decision())
                     choice = self.player.decision() #retrieve choice from computerplayer()
+                    time.sleep(.3) # add 300m/s delay between computer turns
                 else:    
                     choice = input(self.message(self.player, 'roll_prompt')) #retrieve choice from human input
 
