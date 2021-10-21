@@ -55,7 +55,6 @@ class PlayerFactory:
             print(f'invalid species type: {species}. Please choose \'human\' or \'computer\'')
     
 
-
 class Game:
     def __init__(self, die, species):
         self.species = species #list of species types to be instantiated
@@ -82,7 +81,7 @@ class Game:
         self.roll = roll
         #store messages for any occasion here:
         msg_bank = {            
-            'turn_tot_msg' : f'Current turn-total for {self.player.name}: {self.player.turn_total}',
+            'turn_tot_msg' : f'current turn-total for {self.player.name}: {self.player.turn_total}',
             'roll_prompt' : 'Enter "r" to roll. Enter "h" to hold.',
             'game_tot_msg' : f'{self.player.name} — your current game-total is: {self.player.overall_total} ',
             'die_display' : f'You rolled a {self.roll}',
@@ -90,7 +89,7 @@ class Game:
             'snake_eye' : f'Snake eye! {self.player.name} loses their turn and receives no points',
             's_e_g_t' : f'Your game total is STILL {self.player.overall_total}. Next up!',
             'hold_msg' : f'OK {self.player.name}, your game-total is {self.player.overall_total}',
-            'invalid_cmd' : 'Must enter an \'r\' or \'h\'. Try again'
+            'invalid_cmd' : 'Must enter an \'r\' or \'h\'. Try again',
         }
 
         return msg_bank[msg]
@@ -112,7 +111,7 @@ class Game:
                 if self.player.species == 'computer':
                     #print(self.player.decision())
                     choice = self.player.decision() #retrieve choice from computerplayer()
-                    time.sleep(.3) # add 300m/s delay between computer turns
+                    time.sleep(.1) # add 100m/s delay between computer turns
                 else:    
                     choice = input(self.message(self.player, 'roll_prompt')) #retrieve choice from human input
 
@@ -157,7 +156,34 @@ class Game:
             for p in self.players:
                 self.turn(p)
 
+
+
+class TimedGameProxy(Game):
+    def __init__(self, die, species):
+        super().__init__(die, species)
+        self.start = time.time()
+        
+    def play(self):
+        while not self.is_game_over():
+            if time.time() - self.start <= 60:
+                for p in self.players:
+                    self.turn(p)
+            else:
+                print(' -  -  - TIMES UP! -  -  -  ')
+                scores = {s.name: s.overall_total for s in self.players}
+                winner = max(scores, key=scores.get)
+                print('SCORES:')
+                for k,v in scores.items():
+                    print(f'{k}: {v}')
+                print(f'{winner} automatically wins with a score of {scores[winner]}')
+                # print(time.time() - self.start)
+                break
                 
+
+
+    
+      
+
         
 if __name__ == '__main__':
 
@@ -171,6 +197,14 @@ if __name__ == '__main__':
     players = [args.player1, args.player2] 
     die = Die()
 
-    game = Game(die, players)
-    game.make_players()
-    game.play()
+    timer_on = ['y', 'yes']
+
+    if args.timed in timer_on:
+        game = TimedGameProxy(die, players)
+        game.make_players()
+        game.play()
+
+    else: 
+        game = Game(die, players)
+        game.make_players()
+        game.play()
