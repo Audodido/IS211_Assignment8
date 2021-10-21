@@ -107,8 +107,13 @@ class Game:
                 print(self.message(self.player, 'game_tot_msg')) # display basic player info at start of their turn
                 print('and', self.message(self.player, 'turn_tot_msg'))
 
-                choice = input(self.message(self.player, 'roll_prompt')) #retrieve choice
                 
+                if self.player.species == 'computer':
+                    #print(self.player.decision())
+                    choice = self.player.decision() #retrieve choice from computerplayer()
+                else:    
+                    choice = input(self.message(self.player, 'roll_prompt')) #retrieve choice from human input
+
                 if choice == 'r':
                     roll = die.roll()
                     
@@ -142,7 +147,7 @@ class Game:
 
                 else:
                     print(self.message(self.player, 'invalid_cmd'))                         
-                # turn = False
+            # turn = False
 
                     
     def play(self):
