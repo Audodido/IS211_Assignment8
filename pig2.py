@@ -11,6 +11,7 @@ class Die:
         return dots
 
 
+
 class Player:
     def __init__(self, name):
         self.name = name
@@ -18,12 +19,25 @@ class Player:
         self.turn_total = 0
 
 
+
 class Human(Player):
         species = 'human'
 
 
+
 class ComputerPlayer(Player):
         species = 'computer'
+
+        def decision(self):
+            possA = 100 - self.overall_total 
+            possB = 25
+            choices = [possA, possB]
+
+            if self.turn_total >= min(choices):
+                return 'h'
+            else:
+                return 'r'
+
 
 
 # call this from Game class to instantiate players
@@ -39,6 +53,7 @@ class PlayerFactory:
         else:
             print(f'invalid species type: {species}. Please choose \'human\' or \'computer\'')
     
+
 
 class Game:
     def __init__(self, die, species):
@@ -59,6 +74,7 @@ class Game:
                 return True
             else:
                 return False
+
 
     def message(self, player, msg, roll=None):
         self.player = player
@@ -136,11 +152,6 @@ class Game:
 
                 
         
-
-
-
-
-
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
@@ -155,9 +166,4 @@ if __name__ == '__main__':
 
     game = Game(die, players)
     game.make_players()
-
-    #below for testing
-    for p in game.players:
-        game.play()
-        # print(p.name, p.species)
-        # print(game.message(p, 'turn_tot_msg'))
+    game.play()
