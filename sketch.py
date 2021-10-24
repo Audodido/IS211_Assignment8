@@ -98,3 +98,15 @@ def test():
 
     
 test()
+
+
+
+
+def get_choice(self):
+    return int(self.get_pending_points()) >= 25 or (int(self.get_score()) - 100) >= 25
+
+
+# def thing(val1, val2):
+#     return val1 or val2 
+
+# print(thing(30,2))

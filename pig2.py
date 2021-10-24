@@ -42,7 +42,6 @@ class ComputerPlayer(Player):
 
 
 # call this from Game class to instantiate players
-# https://www.youtube.com/watch?v=-a1PFtooGo4
 class PlayerFactory:
     def get_player(self, species, name):
         self.species = species
@@ -79,8 +78,7 @@ class Game:
     def message(self, player, msg, roll=None):
         self.player = player
         self.roll = roll
-        #store messages for any occasion here:
-        msg_bank = {            
+        msg_bank = {     #store messages for any occasion here:        
             'turn_tot_msg' : f'current turn-total for {self.player.name}: {self.player.turn_total}',
             'roll_prompt' : 'Enter "r" to roll. Enter "h" to hold.',
             'game_tot_msg' : f'{self.player.name} — your current game-total is: {self.player.overall_total} ',
@@ -109,7 +107,6 @@ class Game:
 
                 
                 if self.player.species == 'computer':
-                    #print(self.player.decision())
                     choice = self.player.decision() #retrieve choice from computerplayer()
                     time.sleep(.1) # add 100m/s delay between computer turns
                 else:    
@@ -148,7 +145,6 @@ class Game:
 
                 else:
                     print(self.message(self.player, 'invalid_cmd'))                         
-            # turn = False
 
                     
     def play(self):
@@ -165,7 +161,7 @@ class TimedGameProxy(Game):
         
     def play(self):
         while not self.is_game_over():
-            if time.time() - self.start <= 60:
+            if time.time() - self.start <= 60: # change this number to change timer duration
                 for p in self.players:
                     self.turn(p)
             else:
@@ -176,13 +172,8 @@ class TimedGameProxy(Game):
                 for k,v in scores.items():
                     print(f'{k}: {v}')
                 print(f'{winner} automatically wins with a score of {scores[winner]}')
-                # print(time.time() - self.start)
                 break
                 
-
-
-    
-      
 
         
 if __name__ == '__main__':
