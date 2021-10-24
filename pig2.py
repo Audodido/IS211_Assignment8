@@ -67,7 +67,7 @@ class Game:
             self.players.append(player.get_player(self.species[p], f'player {str(p+1)}'))
 
 
-    def is_game_over(self): # will have to eventually check for game duration as well
+    def is_game_over(self):
         for player in self.players:
             if player.overall_total >= 100:
                 return True
